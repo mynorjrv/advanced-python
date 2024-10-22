@@ -1,3 +1,4 @@
+import copy
 from functools import partial
 import random
 from tkinter import Tk
@@ -10,14 +11,6 @@ from tkinter import messagebox
 # https://tkdocs.com/shipman/extra-args.html
 # https://stackoverflow.com/questions/10865116/tkinter-creating-buttons-in-for-loop-passing-command-arguments
 
-def click(ordered_list:list[int]) -> callable:
-    def inner_click(ev, inner_list=ordered_list):
-        index = order_variable.get()
-        print(inner_list)
-        if int(button.cget('text'))==inner_list[index]:
-            button.config(state='disabled')
-            order_variable.set(index+1)
-    return inner_click
 
 root = Tk()
 root.title("Clicker")
@@ -29,12 +22,51 @@ mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 mainframe.columnconfigure([i for i in range(5)], weight=1)
 mainframe.rowconfigure([i for i in range(6)], weight=1)
 
+def random_list(
+        length:int=1, 
+        rang:list[int, int]=None
+    ) -> list[int]:
+    """ Returns a list of length "len", containing non repiting
+    random integers in range "rang".
+    """
+    if rang is None:
+        rang = [1, 100]
+    if len(rang)!=2:
+        raise ValueError("rang needs 2 arguments")
+    if rang[0]>rang[1]:
+        raise ValueError("The second value should be grater")
+    if rang[1]-rang[0]<length:
+        raise ValueError("range in rang must be grater than length")
+
+    random_list = []
+
+    while len(random_list)<length:
+        random_number = random.randint(rang[0], rang[1])
+        if random_number in random_list:
+            continue
+        random_list.append(random_number)
+
+    return random_list
+
 # Ordered list
-clicker_number_list = [i+1 for i in range(25)]
-clicker_number_list_copy = [i for i in range(25)]
+clicker_number_list = sorted(random_list(25, [1, 1000]))
+clicker_number_list_copy = copy.copy(clicker_number_list)
 order_variable = IntVar(mainframe, 0)
 
-command = click(clicker_number_list_copy)
+def click(ordered_list:list[int], button_number:int) -> callable:
+    def inner_click(
+            ev, inner_list=ordered_list, inner_number=button_number
+        ):
+        index = order_variable.get()
+        print(inner_list)
+        print(inner_number)
+        print(index)
+        print(inner_list[index])
+        if inner_number==inner_list[index]:
+            # TODO: This line is not working
+            all_buttons[index].config(state='disabled')
+            order_variable.set(index+1)
+    return inner_click
 
 all_buttons = []
 # Clicher buttons
@@ -44,7 +76,10 @@ for column in range(5):
         clicker_number_list.remove(this_button_number)
         button = ttk.Button(mainframe, text=f'{this_button_number}')
         button.grid(column=column, row=row, sticky=(N, W, E, S))
-        button.bind('<Button-1>', command)
+        button.bind(
+            '<Button-1>', 
+            click(clicker_number_list_copy, this_button_number)
+        )
         all_buttons.append(button)
 
 # Counter tag
