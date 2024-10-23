@@ -53,18 +53,22 @@ clicker_number_list = sorted(random_list(25, [1, 1000]))
 clicker_number_list_copy = copy.copy(clicker_number_list)
 order_variable = IntVar(mainframe, 0)
 
-def click(ordered_list:list[int], button_number:int) -> callable:
+def click(
+        ordered_list:list[int], button_number:int, button_index:int
+    ) -> callable:
     def inner_click(
-            ev, inner_list=ordered_list, inner_number=button_number
-        ):
+            ev, 
+            inner_list=ordered_list, 
+            inner_number=button_number, 
+            inner_index=button_index
+        ) -> None:
         index = order_variable.get()
         print(inner_list)
         print(inner_number)
         print(index)
         print(inner_list[index])
         if inner_number==inner_list[index]:
-            # TODO: This line is not working
-            all_buttons[index].config(state='disabled')
+            all_buttons[inner_index].config(state='disabled')
             order_variable.set(index+1)
     return inner_click
 
@@ -78,7 +82,11 @@ for column in range(5):
         button.grid(column=column, row=row, sticky=(N, W, E, S))
         button.bind(
             '<Button-1>', 
-            click(clicker_number_list_copy, this_button_number)
+            click(
+                clicker_number_list_copy, 
+                this_button_number,
+                len(all_buttons)
+            )
         )
         all_buttons.append(button)
 
