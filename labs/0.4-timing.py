@@ -1,3 +1,4 @@
+import datetime
 import random
 from tkinter import Tk
 from tkinter import StringVar, IntVar, BooleanVar
@@ -9,13 +10,22 @@ from tkinter import messagebox
 def count_time():
     if counting_state.get():
         counter.set(counter.get()+1)
-        label.config(text=f"Counted seconds: {counter.get()}")
         label.after(1000, count_time)
+        # label.config(text=f"Counted seconds: {counter.get()}")
+        # init_time = (
+        #     datetime.datetime(1,1,1)
+        #     +datetime.timedelta(milliseconds=counter.get()*1000)
+        # ).strftime('%H:%M:%S.%f')[:-4]
+        seconds = counter.get()
+        label.config(
+            text=f"Time: {int(seconds/60):02}:{seconds%60:02}"
+        )
 
 def start_counting():
     if not counting_state.get():
-        counting_state.set(True)
         label.after(1000, count_time)
+        counting_state.set(True)
+        # counter.set(counter.get()+1)
         # count_time()
 
 def stop_counting():
@@ -47,16 +57,14 @@ end_button.grid(column=1, row=0, sticky=(N, W, E, S))
 
 counter = IntVar(mainframe, 0)
 
+# init_time = (
+#     datetime.datetime(1,1,1)+datetime.timedelta(milliseconds=0)
+# ).strftime('%H:%M:%S.%f')[:-4]
 label = ttk.Label(
     master=mainframe, 
-    text=f"Counted seconds: 0"
+    text=f"Time: 00:00"
 )
 label.grid(column=0, row=1, columnspan=2)
 
 
-# is_white = True
-# window = tk.Tk()
-# frame = tk.Frame(window, width=200, height=100, bg='white')
-# frame.after(100, blink)
-# frame.pack()
 root.mainloop()
