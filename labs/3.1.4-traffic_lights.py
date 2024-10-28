@@ -8,7 +8,41 @@ from tkinter import Canvas
 phases = ((True,  False, False),
           (True,  True,  False),
           (False, False, True),
-          (False, True,  False))
+          (False, True,  False),
+          (True, True, True))
+
+def change_phase(
+        phases:tuple[tuple[bool, bool, bool]]
+    ) -> callable:
+    def inner_change_phase(
+            inner_phase=phases
+        ) -> None:
+        phase = phase_counter.get()
+        colors = inner_phase[phase]
+
+        if colors[0]:
+            canvas.itemconfig(oval_up, fill='red')
+            # oval_up.config(fill='red')
+        else:
+            canvas.itemconfig(oval_up, fill='gray')
+        
+        if colors[1]:
+            canvas.itemconfig(oval_middle, fill='yellow')
+        else:
+            canvas.itemconfig(oval_middle, fill='gray')
+
+        if colors[2]:
+            canvas.itemconfig(oval_down, fill='green')
+        else:
+            canvas.itemconfig(oval_down, fill='gray')
+
+        phase_counter.set((phase+1)%(len(inner_phase)))
+    return inner_change_phase
+
+def quit():
+    replay = messagebox.askquestion("Quit?", "Are you sure?")
+    if replay == 'yes':
+        root.destroy()
 
 root = Tk()
 root.title("Traffic lights")
@@ -23,6 +57,7 @@ mainframe.rowconfigure([0, 1, 2], weight=1)
 canvas = Canvas(mainframe, height=810, width=270, background='dark gray')
 canvas.grid(column=0, row=0, columnspan=3)
 
+phase_counter = IntVar(mainframe, 0)
 
 oval_up = canvas.create_oval(
     22.5, 22.5, 247.5, 247.5, fill='gray', outline='black'
@@ -35,10 +70,12 @@ oval_down = canvas.create_oval(
 )
 
 
-next_button = ttk.Button(mainframe, text='Next')
+next_button = ttk.Button(
+    mainframe, text='Next', command=change_phase(phases=phases)
+)
 next_button.grid(column=1, row=1)
 
-quit_button = ttk.Button(mainframe, text='Quit')
+quit_button = ttk.Button(mainframe, text='Quit', command=quit)
 quit_button.grid(column=1, row=2)
 
 root.mainloop()
