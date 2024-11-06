@@ -1,0 +1,11 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!-- <?xml version="1.0" encoding="ISO-8859-1"?> -->
+<!DOCTYPE lista_de_personas SYSTEM "ejemplo.dtd">
+<lista_de_personas>
+  <persona>
+    <nombre>José García</nombre>
+    <fechanacimiento>25/04/1984</fechanacimiento>
+    <sexo>Varón</sexo>
+    <numeroseguridadsocial>0221</numeroseguridadsocial>
+  </persona>
+</lista_de_personas>
