@@ -3,12 +3,16 @@
 <!-- cars.xml - List of cars ready to sell -->
 <!-- This is a meta-document, dtd is document type definition -->
 <!DOCTYPE cars_for_sale SYSTEM "cars.dtd">
+<!-- xml consist of elements, inside tags we have content
+(or elemnt's text) -->
+<!-- root element must occur exactly once -->
 <cars_for_sale>
    <car>
       <id>1</id>
       <brand>Ford</brand>
       <model>Mustang</model>
       <production_year>1972</production_year>
+      <!-- Tags may have atributes -->
       <price currency="USD">35900</price>
    </car>
    <car>
