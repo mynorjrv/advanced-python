@@ -35,13 +35,11 @@ def show(json):
 
 
 try:
-    # Yeeeeep, not really comfortable using this thing xd
-    reply = requests.get(
-        'http://localhost:3000/cars?_sort=production_year&_order=desc'
-    )
+    reply = requests.get('http://localhost:3000/cars')
 except requests.RequestException:
     print('Communication error')
 else:
+    print('Connection=' + reply.headers['Connection'])
     if reply.status_code == requests.codes.ok:
         show(reply.json())
     elif reply.status_code == requests.codes.not_found:
@@ -49,3 +47,17 @@ else:
     else:
         print('Server error')
 
+
+with requests.Session() as s:
+    s.get('http://localhost:3000/cars')
+    print('Connection=' + s.headers['Connection'])
+
+with requests.get('http://localhost:3000/cars', stream=True) as r:
+    print('Connection=' + r.headers['Connection'])
+
+with requests.get(
+        'http://localhost:3000/cars', 
+        stream=True, 
+        headers={'Connection':'close'}
+    ) as r:
+    print('Connection=' + r.headers['Connection'])
