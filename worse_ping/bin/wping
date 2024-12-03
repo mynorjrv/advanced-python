@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+# https://python-packaging.readthedocs.io/en/latest/command-line-scripts.html
+
+# import .wping
+print('hello')
