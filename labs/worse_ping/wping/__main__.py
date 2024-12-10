@@ -1,4 +1,4 @@
-from .wping import main
+from .wping import main, main_requests
 
 # https://realpython.com/python-typer-cli/
 # https://medium.com/@noransaber685/simple-guide-to-creating-a-command-line-interface-cli-in-python-c2de7b8f5e05
