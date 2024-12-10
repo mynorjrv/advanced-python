@@ -50,3 +50,44 @@ def main():
     # print(type(repr(reply)))
     print(repr(reply).partition('\\r\\n')[0][2:])
     exit(0)
+
+
+def main_requests():
+    if len(sys.argv) == 1:
+        print(
+            'wping: http server adress is required,\n'
+            'port is optional (default=80)'
+        )
+        exit(1)
+    if len(sys.argv) > 3:
+        print(
+            'wping: accepts 2 arguments: http addres and port\n'
+            'more were passed.'
+        )
+        exit(1)
+    port = 80
+    if len(sys.argv) == 3:
+        try:
+            port = int(sys.argv[2])
+            if port<1 or port>65535:
+                raise ValueError
+        except ValueError:
+            print('wping: invalid port')
+            exit(2)
+
+    try:
+        reply = requests.get(
+            url=f'{sys.argv[1]}:{port}',
+        )
+    except requests.Timeout:
+        print('wping: timeout error')
+        exit(3)
+    except Exception as e:
+        print('wping: exception happend')
+        print(e)
+        exit(4)
+
+    # print(repr(reply))
+    # print(type(repr(reply)))
+    print(reply.status_code)
+    exit(0)
