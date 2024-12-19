@@ -1,3 +1,8 @@
 https://stackoverflow.com/questions/1270514/undoing-a-git-push
 https://gist.github.com/CrookedNumber/8964442
 https://anhcodes.dev/blog/recover-lost-files-git-reset-hard/
+
+Rebasing to change author of commits
+https://graphite.dev/guides/git-change-author-of-commit
+https://stackoverflow.com/questions/3042437/how-can-i-change-the-commit-author-for-a-single-commit
+https://stackoverflow.com/questions/2973996/git-rebase-without-changing-commit-timestamps
