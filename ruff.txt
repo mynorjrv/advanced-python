@@ -1,0 +1,6 @@
+ruff.toml
+
+line-length = 90
+
+[lint]
+select = ["ALL"]
