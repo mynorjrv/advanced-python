@@ -223,5 +223,80 @@ print(p1 + p2)
 
 `help()` is also used to display documentation (if delivered) of modules, functions, classes, and keywords.
 
+Some examples of other dunder methos are in the following table:
+
+| Function or  operator | Dunder method               |
+|-----------------------|-----------------------------|
+| +                     | `__add__(self, other)`      |
+| -                     | `__sub__(self, other)`      |
+| *                     | `__mul__(self, other)`      |
+| //                    | `__floordiv__(self, other)` |
+
 For more information on dunder methods refer to <https://docs.python.org/3/reference/datamodel.html#special-method-names>.
 
+## Inheritance and polymorphism
+
+Inheritance express a fundamental relationship between classes: superclasses (partents) and subclasses (descendants). Inheritance creates a hierarchy, any objet bound to a specific level of the class hierarchy inherits all the traits defined inside any of the superclasses.
+
+With this, inheritance is a way of building new classes, not from scratch, but from an already defined repertoire of traits. The new class inherits the traits of its parent, but its also able to add new features if needed.
+
+Each subclass is more specialized (or more specific) than its superclass. Conversely, each superclass is more general (more abstract) than any of its subclasses.
+
+```Python
+class Vehicle:
+    pass
+
+class LandVehicle(Vehicle):
+    pass
+
+class TrackedVehicle(LandVehicle):
+    pass
+```
+
+
+### Multiple inheritance
+
+In Python, it is possible to derive a new class from more than one previously defined class.
+
+> Even though it exists... Is not recommended.
+
+#### MRO - Method Resolution Order
+
+Python defines a MRO algorithm to define which traits are used in case of multiple inheritance.
+
+```Python
+class A:
+    def info(self):
+        print('Class A')
+
+class B(A):
+    def info(self):
+        print('Class B')
+
+class C(A):
+    def info(self):
+        print('Class C')
+
+class D(B, C):
+    pass
+
+D().info()
+```
+
+In the example, `D().info()` will go a level up and then left to right, calling the method in B as a result.
+
+Even with this algorithm it is possible to create inconsistencies.
+
+### Polymorphism
+
+Polymorphism refers to the provision of a single interface to object of different types. This refers on how two different types are handled differently even if the same operator is applied to them. This creates an abstraction to treat those types in a uniform way.
+
+> This was partially introduce in core syntax
+
+One way of implementing polymorphism is inheritance. A subclass can make use of base class methods or override them to fit the new type. 
+
+Another way of achieving polymorphism is by the implementation of Duck Typing: "If it walks like a duck and it quacks like a duck, then it must be a duck". This refers to an object suitability being determined by the presence of certain attribute, rather than the type itself.
+
+In duck typing, we believe that objects own the methods that are called. If they do not own them, then we should be prepared to handle exceptions.
+
+## Functions arguments
