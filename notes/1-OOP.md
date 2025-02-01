@@ -300,3 +300,59 @@ Another way of achieving polymorphism is by the implementation of Duck Typing: "
 In duck typing, we believe that objects own the methods that are called. If they do not own them, then we should be prepared to handle exceptions.
 
 ## Functions arguments
+
+Functions in Python can work with an arbitrary number of positional or keyword arguments. When working with them, the `*args` and `**kwargs` identifiers are used, the names can be changed but it is important to respect the order of them and the leading asterisks.
+
+```Python
+def g(a, b, *args, kw_only, **kwargs):
+	print(f'{a=}, {b=}, {args=}, {kw_only}, {kwargs}')
+```
+
+- `*args` refers to a tuple of all not explicitly expected positional arguments.
+- `**kwargs` refers to a dictionary of all unexpected arguments passed in the form keyword=value pair.
+
+In Python, the asterisk denotes an 'unpacking'. Using the asterisks in the function definition means these parameters carry multiple items and should be unpacked.
+
+> You can use ** outside function definitions (in function calls and dictionaries definitions) to unpack dictionaries. For example:\
+> `first = {'a': 3, 'b': 5}`\
+> `second = {'c': 4, 'd': 7}`\
+> `another = {**first, **second}`\
+> Would result in \
+> `another = {'a': 3, 'b': 5, 'c': 4, 'd': 7}`
+
+The order is important because since the `*` symbol takes all the not expected positional arguments, all arguments after it must be keyword arguments. Also, the `*` symbol can be used without an identifier to invalidate not expected positional arguments, this way receiving non expected positional arguments raises an error.
+
+> keyword only arguments are usually used as options for a function. A simple example is `print('something', end='\t')`. Another usage is when it is important to not get data confused.
+
+In the same fashion of `*` separating positional and keyword only arguments, it is possible to use `/` to separate positional only arguments. 
+
+```Python
+def g(pos_only, /, a, b, *args, kw_only, **kwargs):
+	print(f'{pos_only=}, {a=}, {b=}, {args=}, {kw_only}, {kwargs}')
+```
+
+
+## Decorators
+
+Decorators are a design pattern that allows behavior to be added to an object without affecting other instances of the same class. 
+
+In Python, a decorator's operation is based on wrapping a function with a new "decorating" function (or class). This is done by passing the original (**decorated**) function as a parameter to the **decorating** function. The decorating function then returns a new function.
+
+Decorators are used to perform operations before or after a call to the decorated (wrapped) object, or even prevent its execution.
+
+Some common case of use are:
+
+- the validation of arguments;
+- the modification of arguments;
+- the modification of returned objects;
+- the measurement of execution time;
+- message logging;
+- thread synchronization;
+- code refactoring;
+- caching.
+
+### Function decorators
+
+
+
+
