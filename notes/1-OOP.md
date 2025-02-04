@@ -353,6 +353,37 @@ Some common case of use are:
 
 ### Function decorators
 
+```Python
+def simple_hello():
+    print("Hello from simple function!")
 
+def simple_decorator(function):
+    print(
+		'We are about to call "{}"'.format(function.__name__)
+	 )
+    return function
 
+decorated = simple_decorator(simple_hello)
+decorated()
+```
+
+Decorators for functions accepts another function as argument and return a new function with some extra behavior.
+
+In python this is done with the following syntax:
+
+```Python
+def simple_decorator(function):
+    print('We are about to call "{}"'.format(function.__name__))
+    return function
+
+@simple_decorator
+def simple_hello():
+    print("Hello from simple function!")
+
+simple_hello()
+```
+
+In this case, the definition of `simple_hello()` is decorated with `@simple_decorator`. In this case the operation is performed on the object (the function) name, which means the object name cease to indicate the original object and then indicates the object returned by the decorator.
+
+Decorators are specially useful when debugging or refactoring code.
 
