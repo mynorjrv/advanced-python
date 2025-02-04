@@ -383,7 +383,42 @@ def simple_hello():
 simple_hello()
 ```
 
-In this case, the definition of `simple_hello()` is decorated with `@simple_decorator`. In this case the operation is performed on the object (the function) name, which means the object name cease to indicate the original object and then indicates the object returned by the decorator.
+In this case, the definition of `simple_hello()` is decorated with `@simple_decorator`. The operation is performed on the object (the function) name, which means the object name cease to indicate the original object and then indicates the object returned by the decorator.
 
 Decorators are specially useful when debugging or refactoring code.
+
+### Decorators should be universal
+
+Decorators must support any function, regardless of the number and type of arguments passed. `*args` and `**kwargs` are used to achieve this, in combination with a closure technique to persist the arguments.
+
+> In programming languages, a closure, also lexical closure or function closure, is a technique for implementing lexically scoped name binding in a language with first-class functions. Operationally, a closure is a record storing a function together with an environment.
+> In Python, this can be done using nested functions.
+
+```Python
+def simple_decorator(own_function):
+
+    def internal_wrapper(*args, **kwargs):
+        print('"{}" was called with the following arguments'.format(own_function.__name__))
+        print('\t{}\n\t{}\n'.format(args, kwargs))
+        own_function(*args, **kwargs)
+        print('Decorator is still operating')
+
+    return internal_wrapper
+
+
+@simple_decorator
+def combiner(*args, **kwargs):
+    print("\tHello from the decorated function; received arguments:", args, kwargs)
+
+combiner('a', 'b', exec='yes')
+```
+
+Arguments passed to the decorated function are available to the decorator, so the decorator can use them.
+
+A nested function (`internal_wrapper()`) could reference an object (`own_function()`) in its enclosing scope thanks to the closure.
+
+### Decorators can accept their own arguments
+
+In Python, it is possible to create a decorator with arguments. In this case, the decorator is enriched with one more nested function to make it available to handle arguments at all call levels. 
+
 
