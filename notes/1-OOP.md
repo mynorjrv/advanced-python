@@ -351,6 +351,8 @@ Some common case of use are:
 - code refactoring;
 - caching.
 
+Decorators are described in PEP 318 and PEP 3129.
+
 ### Function decorators
 
 ```Python
@@ -499,4 +501,60 @@ combiner('a', 'b', exec='yes')
 An advantage of this approach is the subsidiarity classes can offer, like creating dedicated supportive methods.
 
 > For info about python callables: <https://eli.thegreenplace.net/2012/03/23/python-internals-how-callables-work/>
+
+### Class decorators
+
+Class decorator use the same syntax and implement the same concepts as function decorators.
+
+Instead of wrapping individual methods with functions decorators, class decorators are ways to manage classes or wrap special method calls into additional logic that manages or extends instances that are created.
+
+The syntax is the same as function decorators, class decorators appear before the `class` declaration and they operate over the class name.
+
+```Python
+@my_decorator
+class MyClass:
+
+obj = MyClass()
+
+'''Is equivalent to'''
+'''Doc sting because markdown gets crazy with #''' 
+def my_decorator(A):
+   ...
+
+class MyClass:
+   ...
+
+MyClass = my_decorator(MyClass())
+
+obj = MyClass()
+
+```
+
+A more extensive example is given bellow:
+
+```Python
+def object_counter(class_):
+    class_.__getattr__orig = class_.__getattribute__
+
+    def new_getattr(self, name):
+        if name == 'mileage':
+            print('We noticed that the mileage attribute was read')
+        return class_.__getattr__orig(self, name)
+
+    class_.__getattribute__ = new_getattr
+    return class_
+
+@object_counter
+class Car:
+    def __init__(self, VIN):
+        self.mileage = 0
+        self.VIN = VIN
+
+car = Car('ABC123')
+print('The mileage is', car.mileage)
+print('The VIN is', car.VIN)
+```
+
+
+## Static and class methods
 
