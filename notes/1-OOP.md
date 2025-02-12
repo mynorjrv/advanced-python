@@ -558,3 +558,27 @@ print('The VIN is', car.VIN)
 
 ## Static and class methods
 
+### Instance methods
+
+Until now, we have implemented methods that perform operations on the instances, and in particular over attributes of the instances. For this, they are called instance methods.
+
+Instances methods takes `self` as the first parameter, which is their hallmark. The name `self` is a convention, and allows you to refer to the instance. It follows that in order t successfully use the instance method, the instance must have previously existed.
+
+```Python
+class Example:
+    def __init__(self, value):
+        self.__internal = value
+
+    def get_internal(self):
+        return self.__internal
+
+example1 = Example(10)
+example2 = Example(99)
+print(example1.get_internal())
+print(example2.get_internal())
+```
+
+
+### Class methods
+
+
