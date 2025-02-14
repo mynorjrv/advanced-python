@@ -581,4 +581,59 @@ print(example2.get_internal())
 
 ### Class methods
 
+This methods, like class variables, work on the class itself, and not on the objects that are instantiated. To signal a class method, it is decorator with `@classmethod` before the definition of the method.
 
+The two most popular reasons why this methods are useful are 
+- to control access to class variables;
+- to implement an alternative constructor, to create instances in an alternative way.
+
+By convention, class methods receives `cls` as the first parameter instead of `self`, and is used to refer to the class methods and class attributes.
+
+```Python
+class Example:
+    __internal_counter = 0
+
+    def __init__(self, value):
+        Example.__internal_counter +=1
+
+    @classmethod
+    def get_internal(cls):
+        return '# of objects created: {}'.format(cls.__internal_counter)
+
+print(Example.get_internal())
+
+example1 = Example(10)
+print(Example.get_internal())
+
+example2 = Example(99)
+print(Example.get_internal())
+```
+
+In the example above, the class method is used to access a class variable. It would be possible to use `Example.__internal_counter` but this will be inconsistent with the convention and the code loses its effectiveness in communicating its own meaning. (?)
+
+An exception is the `__init__()` method, which by definition is an instance method, so it can’t use “cls”, and as a result it references the class variable by the “Example” prefix.
+
+```Python
+class Car:
+    def __init__(self, vin):
+        print('Ordinary __init__ was called for', vin)
+        self.vin = vin
+        self.brand = ''
+
+    @classmethod
+    def including_brand(cls, vin, brand):
+        print('Class method was called')
+        _car = cls(vin)
+        _car.brand = brand
+        return _car
+
+car1 = Car('ABCD1234')
+car2 = Car.including_brand('DEF567', 'NewBrand')
+
+print(car1.vin, car1.brand)
+print(car2.vin, car2.brand)
+```
+
+In the second example, it is show how to use the class method as an alternative constructor, allowing you to handle an additional argument.
+
+In this case, `cls(vin)` is used to create the instance, using the normal constructor and then performing the additional of including brand.
