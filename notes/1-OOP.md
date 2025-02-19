@@ -637,3 +637,40 @@ print(car2.vin, car2.brand)
 In the second example, it is show how to use the class method as an alternative constructor, allowing you to handle an additional argument.
 
 In this case, `cls(vin)` is used to create the instance, using the normal constructor and then performing the additional of including brand.
+
+### Static methods
+Static methods are methods that do not require (and do not expect!) a parameter indicating a class instance or the class itself in order to be executed. To signal a static method, it is decorator with `@staticmethod` before the definition of the method.
+
+They are use useful:
+- When you need a utility method that is semantically related to the class, but does not require an object of that class or the class itself;
+- When the method do not need to know the state of the objects or classes.
+
+Static methods do not have the hability to modify the state of object or classes, because they lack the parameters that would allow this. (There is no `self` or `cls`).
+
+```Python
+class Bank_Account:
+    def __init__(self, iban):
+        print('__init__ called')
+        self.iban = iban
+            
+    @staticmethod
+    def validate(iban):
+        if len(iban) == 20:
+            return True
+        else:
+            return False
+
+account_numbers = ['8' * 20, '7' * 4, '2222']
+
+for element in account_numbers:
+    if Bank_Account.validate(element):
+        print('We can use', element, ' to create a bank account')
+    else:
+        print('The account number', element, 'is invalid')
+```
+
+From Arjan: Some methods can (and should) be replaced by functions, classes that just use static methods should be replaced by modules n.n .
+
+In the example, a validation can be done without creating instances or using information from the class itself, but it make sense to group the method inside the class.
+
+## Abstract classes
