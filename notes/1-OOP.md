@@ -674,3 +674,51 @@ From Arjan: Some methods can (and should) be replaced by functions, classes that
 In the example, a validation can be done without creating instances or using information from the class itself, but it make sense to group the method inside the class.
 
 ## Abstract classes
+
+Abstract classes should be considered as a blue print for other classes, a contract between the class designer and the programmer:
+
+- The class designer sets requirements regarding methods that must be implemented. In an abstract class this methods are declared but not defined in detail. Such methods are called **abstract methods**.
+- The programmer has to deliver all method definitions by overriding the methods declarations received from the abstract class. 
+
+This contract creates an interface between all the subclasses created from the abstract class and the user of this classes, all child classes will be equipped with a set of concrete methods imposed by the abstract class. In this sense, abstract classes are strongly related to inheritance.
+
+Abstract classes allows polymorphism, all subclasses use common method names but each one delivers a set of their own method implementation.
+
+Furthermore, a class which contains one or more abstract methods is called an abstract class. This means that abstract classes are not limited to containing only abstract methods – some of the methods can already be defined, but if any of the methods is an abstract one, then the class becomes abstract. This allows to design large functional units, implementing some common functionality to all subclasses.
+
+It is important to remember that it isn’t possible to instantiate an abstract class, and it needs subclasses to provide implementations for those abstract methods which are declared in the abstract classes. This behavior is a test performed by a dedicated Python module to validate if the developer has implemented a subclass that overrides all abstract methods.
+
+With this, we have defined the means by which to provide a common Application Program Interface (API) for a set of subclasses. This capability is specially useful when a team or third-party is going to provide implementations (for example plugins) even after the main application development is finished.
+
+### Implementing abstract classes
+
+Python has come up with a module which provides the helper class for defining Abstract Base Classes (ABC) and that module name is abc.
+
+The ABC allows you to mark classes as abstract ones and distinguish which methods of the base abstract class are abstract. A method becomes abstract by being decorated with an `@abstractmethod` decorator.
+
+```Python
+import abc
+
+class BluePrint(abc.ABC):
+    @abc.abstractmethod
+    def hello(self):
+        pass
+
+class GreenField(BluePrint):
+    def hello(self):
+        print('Welcome to Green Field!')
+
+class RedField(BluePrint):
+    def yellow(self):
+        pass
+
+gf = GreenField()
+gf.hello()
+``` 
+
+As said before, the abstract class cannot be instantiated, attempting something as `bp = BluePrint()` raises a `TypeError`. Following this, if a subclass does not override an abstract method (as `RedField`), this subclass is also an abstract class and instantiating it will also raise a `TypeError`.
+
+## Encapsulation
+
+
+
