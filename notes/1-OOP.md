@@ -720,5 +720,27 @@ As said before, the abstract class cannot be instantiated, attempting something 
 
 ## Encapsulation
 
+Encapsulation describes the idea of building attributes and methods that work on those attributes within a class(?).
+
+Encapsulation is used to hide the attributes inside a class (like a capsule), preventing unauthorized parties direct access to them. Publicly accessible methods are provided in the class to access the values, and other object call those methods to retrieve and modify the values within the object. This can be a way to enforce a certain amount of privacy for the attributes.
+
+Direct access to the object attribute should not be possible, but you can always invoke methods, acting like proxies, to perform some actions on the attributes.
+
+Python introduces the concept of properties that act like proxies to encapsulated attributes.
+
+This concept has some interesting features:
+
+- the code calling the proxy methods might not realize if it is "talking" to the real attributes or to the methods controlling access to the attributes;
+- in Python, you can change your class implementation from a class that allows simple and direct access to attributes to a class that fully controls access to the attributes, and what is most important –consumer implementation does not have to be changed; by consumer we understand someone or something (it could be a legacy code) that makes use of your objects.
+
+Remember that this is not full access control, the programmer can still get access to your attributes intentionally as Python does not deliver true privacy.
+
+Why?
+
+Guido Van Rossum, best known as the author of Python, once said: "We're all consenting adults here" justifying the absence of such access restrictions.
+
+So, if your code does intentionally access the attributes marked as private (prefixed with a double underscore) in a direct way, then remember that this behavior is unpythonic.
+
+
 
 
