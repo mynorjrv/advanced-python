@@ -828,3 +828,66 @@ With this, the name convention is as follows:
 Other code can make use of the property without even knowing about the logic hidden behind it. So, this becomes convenient when access control over an attribute is needed, for example when applying constrains over the attribute.
 
 ## Composition and Inheritance
+
+### A review of inheritance
+
+So far, we have been using the inheritance concept. In this relation, a subclass inherits all the methods and attributes and allows the subclass to extend what has been inherited. This creates a more specialized class and these classes are called tightly coupled.
+
+Inheritance models an **is a** relation (a car is a vehicle). The primary use is to reuse code over a common base. As a result, inheritance could form a tree.
+
+A problem with inheritance is that it can create huge, complex, hierarchical structures of classes. This structure would be hard to understand and debug. This problem is known as class explosion.
+
+### Composition
+
+Another way of constructing adaptable objects is by **composition**. 
+
+Composition models a **has a** relation (a computer has a graphic card). In this sense, an object can be compose using other different objects. The objects used in the composition deliver a set of desired traits and together the act as building blocks of a more complicated structure.
+
+Composition then, instead of using the idea of a common ancestor, projects a class as a container (a composite) able to use other smaller objects, where each part implements at of a desired behavior. 
+
+A result of this implementation is that now the composite is loosely coupled with its blocks, those blocks could be exchanged at any time.
+
+```Python
+class Car:
+    def __init__(self, engine):
+        self.engine = engine
+
+
+class GasEngine:
+    def __init__(self, horse_power):
+        self.hp = horse_power
+
+    def start(self):
+        print('Starting {}hp gas engine'.format(self.hp))
+
+
+class DieselEngine:
+    def __init__(self, horse_power):
+        self.hp = horse_power
+
+    def start(self):
+        print('Starting {}hp diesel engine'.format(self.hp))
+
+
+my_car = Car(GasEngine(4))
+my_car.engine.start()
+my_car.engine = DieselEngine(2)
+my_car.engine.start()
+```
+
+As you can see, a new class is created with an object of another class as an argument. Now the responsibility of the developer is to provide methods to the possible blocks.
+
+### Composition over inheritance
+
+It is common to favor composition over inheritance. Composition offers higher flexibility, it is not needed to build wide hierarchy structures and requirements changes could be managed more easily since dependencies are reduced.
+
+In the other hand, composition transfers responsibilities to the developer, who now should assure that all possible component classes implement the methods in a proper manner. While in inheritance not all inherited methods should be re implemented.
+
+An important fact is that these approaches are not mutually exclusive. A combination of both can be implemented and used as supplementary means of solving problems.
+
+### Some words on Protocols
+
+Python can implement a pattern called Protocol. Protocols, as ABC, implements a layer of abstraction, they both implement interfaces.
+
+Protocols relies on duck typing and ABCs relies on nominal (explicit) typing.
+
