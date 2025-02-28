@@ -891,3 +891,10 @@ Python can implement a pattern called Protocol. Protocols, as ABC, implements a 
 
 Protocols relies on duck typing and ABCs relies on nominal (explicit) typing.
 
+## Inheriting from built-in classes
+
+Python gives you the ability to create a class that inherits properties from any Python build-in class in order to get a new class that can enrich the parent's attributes or methods. As a result, your newly-created class has the advantage of all of the well-known functionalities inherited from its parent or even parents and you can still access those attributes and methods.
+
+Later, you can override the methods by delivering your own modifications for the selected methods. 
+
+As an example, we can implement a list that just accepts integers as elements. But... Why might you need such object? The idea is to validate the type of elements so the new IntegersList can focus on implementation an not on type control.
