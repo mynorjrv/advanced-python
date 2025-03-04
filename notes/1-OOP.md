@@ -893,8 +893,170 @@ Protocols relies on duck typing and ABCs relies on nominal (explicit) typing.
 
 ## Inheriting from built-in classes
 
+(A boring section xd I coppied all the examples)
+
 Python gives you the ability to create a class that inherits properties from any Python build-in class in order to get a new class that can enrich the parent's attributes or methods. As a result, your newly-created class has the advantage of all of the well-known functionalities inherited from its parent or even parents and you can still access those attributes and methods.
 
 Later, you can override the methods by delivering your own modifications for the selected methods. 
 
 As an example, we can implement a list that just accepts integers as elements. But... Why might you need such object? The idea is to validate the type of elements so the new IntegersList can focus on implementation an not on type control.
+
+```Python
+class IntegerList(list):
+
+    @staticmethod
+    def check_value_type(value):
+        if type(value) is not int:
+            raise ValueError('Not an integer type')
+
+    def __setitem__(self, index, value):
+        IntegerList.check_value_type(value)
+        list.__setitem__(self, index, value)
+
+    def append(self, value):
+        IntegerList.check_value_type(value)
+        list.append(self, value)
+
+    def extend(self, iterable):
+        for element in iterable:
+            IntegerList.check_value_type(element)
+
+        list.extend(self, iterable)
+
+
+int_list = IntegerList()
+
+int_list.append(66)
+int_list.append(22)
+
+int_list.append(66)
+int_list.append(22)
+print('Appending int elements succeed:', int_list)
+
+int_list[0] = 49
+print('Inserting int element succeed:', int_list)
+
+int_list.extend([2, 3])
+print('Extending with int elements succeed:', int_list)
+
+try:
+    int_list.append('8-10')
+except ValueError:
+    print('Appending string failed')
+
+try:
+    int_list[0] = '10/11'
+except ValueError:
+    print('Inserting string failed')
+
+try:
+    int_list.extend([997, '10/11'])
+except ValueError:
+    print('Extending with ineligible element failed')
+
+print('Final result:', int_list)
+```
+
+In the example, this integers list is implemented. Some thing that are woth mentioning is that `__setitem__` (responsible for inserting or overwriting elemnts in a given position), `append` and `extend` were overridden. All other methods of `list` remainded unchanged. To make the class fully functional, it would be necessary to override `insert` and `__add__`.
+
+Another example could be a dictionary where writing and reading operations are equipped with a logging mechanism.
+
+```Python
+from datetime import datetime
+
+
+class MonitoredDict(dict):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.log = list()
+        self.log_timestamp('MonitoredDict created')
+
+    def __getitem__(self, key):
+        val = super().__getitem__(key)
+        self.log_timestamp('value for key [{}] retrieved'.format(key))
+        return val
+
+    def __setitem__(self, key, val):
+        super().__setitem__(key, val)
+        self.log_timestamp('value for key [{}] set'.format(key))
+
+    def log_timestamp(self, message):
+        timestampStr = datetime.now().strftime("%Y-%m-%d (%H:%M:%S.%f)")
+        self.log.append('{} {}'.format(timestampStr, message))
+
+
+kk = MonitoredDict()
+kk[10] = 15
+kk[20] = 5
+
+print('Element kk[10]:', kk[10])
+print('Whole dictionary:', kk)
+print('Our log book:\n')
+print('\n'.join(kk.log))
+
+```
+
+Inheriting from dictionaries is also useful to make dictionaries of specific datatypes. An example is a dictionary of IBAN (International Bank Account Number), this dictionary can implement checks wether a bank account is a valid IBAN.
+
+```Python
+import random
+
+
+class IBANValidationError(Exception):
+    pass
+
+
+class IBANDict(dict):
+    def __setitem__(self, _key, _val):
+        if validateIBAN(_key):
+            super().__setitem__(_key, _val)
+
+    def update(self, *args, **kwargs):
+        for _key, _val in dict(*args, **kwargs).items():
+            self.__setitem__(_key, _val)
+
+
+def validateIBAN(iban):
+    iban = iban.replace(' ', '')
+
+    if not iban.isalnum():
+        raise IBANValidationError("You have entered invalid characters.")
+
+    elif len(iban) < 15:
+        raise IBANValidationError("IBAN entered is too short.")
+
+    elif len(iban) > 31:
+        raise IBANValidationError("IBAN entered is too long.")
+
+    else:
+        iban = (iban[4:] + iban[0:4]).upper()
+        iban2 = ''
+        for ch in iban:
+            if ch.isdigit():
+                iban2 += ch
+            else:
+                iban2 += str(10 + ord(ch) - ord('A'))
+        ibann = int(iban2)
+
+        if ibann % 97 != 1:
+            raise IBANValidationError("IBAN entered is invalid.")
+
+        return True
+
+
+my_dict = IBANDict()
+keys = ['GB72 HBZU 7006 7212 1253 00', 'FR76 30003 03620 00020216907 50', 'DE02100100100152517108']
+
+for key in keys:
+    my_dict[key] = random.randint(0, 1000)
+
+print('The my_dict dictionary contains:')
+for key, value in my_dict.items():
+    print("\t{} -> {}".format(key, value))
+
+try:
+    my_dict.update({'dummy_account': 100})
+except IBANValidationError:
+    print('IBANDict has protected your dictionary against incorrect data insertion')
+
+```
