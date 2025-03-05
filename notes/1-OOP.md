@@ -893,7 +893,7 @@ Protocols relies on duck typing and ABCs relies on nominal (explicit) typing.
 
 ## Inheriting from built-in classes
 
-(A boring section xd I coppied all the examples)
+(A boring section xd I copied all the examples)
 
 Python gives you the ability to create a class that inherits properties from any Python build-in class in order to get a new class that can enrich the parent's attributes or methods. As a result, your newly-created class has the advantage of all of the well-known functionalities inherited from its parent or even parents and you can still access those attributes and methods.
 
@@ -957,7 +957,7 @@ except ValueError:
 print('Final result:', int_list)
 ```
 
-In the example, this integers list is implemented. Some thing that are woth mentioning is that `__setitem__` (responsible for inserting or overwriting elemnts in a given position), `append` and `extend` were overridden. All other methods of `list` remainded unchanged. To make the class fully functional, it would be necessary to override `insert` and `__add__`.
+In the example, this integers list is implemented. Some thing that are worth mentioning is that `__setitem__` (responsible for inserting or overwriting elements in a given position), `append` and `extend` were overridden. All other methods of `list` remained unchanged. To make the class fully functional, it would be necessary to override `insert` and `__add__`.
 
 Another example could be a dictionary where writing and reading operations are equipped with a logging mechanism.
 
@@ -996,7 +996,7 @@ print('\n'.join(kk.log))
 
 ```
 
-Inheriting from dictionaries is also useful to make dictionaries of specific datatypes. An example is a dictionary of IBAN (International Bank Account Number), this dictionary can implement checks wether a bank account is a valid IBAN.
+Inheriting from dictionaries is also useful to make dictionaries of specific datatypes. An example is a dictionary of IBAN (International Bank Account Number), this dictionary can implement checks whether a bank account is a valid IBAN.
 
 ```Python
 import random
@@ -1060,3 +1060,169 @@ except IBANValidationError:
     print('IBANDict has protected your dictionary against incorrect data insertion')
 
 ```
+
+
+# Exceptions
+
+In Python, Exceptions are object that represent errors which occur during the execution of a program that disrupts the normal flow of the programs instructions.
+
+When Python executes a script and encounters a situation that it cannot cope with, it:
+
+- Stops the program.
+- Creates the exception (a special kind of data).
+
+When an exception is raised, it expects somebody to notice and take care of it. If nothing takes care of the exception, the program will be forcibly terminated and the error message will be shown in the console. If the exception is **handled**, the program could resume its execution.
+
+Python provides tools to observe, identify and handle the exceptions efficiently. All potential exceptions have their unambiguous names, so it is possible to categorize them and react appropriately.
+
+An example of an error is `IndexError: list index out of range`. Python comes with (at the moment) 63 built-in exception, and they can be represented in the form of a tree-shaped hierarchy. The reason for this is that exceptions are inherited fro BaseException, the most general exception class.
+
+The inheritance approach also enables the creation of specific exception classes, which will also be a subclass ob BaseException or any other derived exception class.
+
+## Exception handling
+
+When it is expected that the code may raise an exception, the way of handling it is using `try: except Exception:` statements. When this pattern is used, when the exception is raised, execution is not terminated, but the code following the `except` will be executed and will try to handle the problem.
+
+```Python
+try:
+    print(int('a'))
+except ValueError:
+    print('You tried to do a nasty thing...')
+```
+
+## Named attributes
+
+When using `try except` statements, the except clause may specify a variable after the exception name. This variable is bound to an exception instance with the arguments stored in an attribute called `args`.
+
+```Python
+try:
+    import abcdefghijk
+
+except ImportError as e:
+    print(e.args)
+    print(e.name)
+    print(e.path)
+```
+
+Some exceptions may carry additional information about the exception itself.
+
+For example:
+
+- The `ImportError` exception is raised when a module failed to be imported. It have a `name` attribute, which represents the name of the module that was attempted to be imported; and a `path` attribute, which represents the path to any file which triggered the exception, and could be `None`.
+- The `UnicodeError` exception is raised when a Unicode-related encoding or decoding occurs. It is a subclass of `ValueError`. It have `encoding`, `reason`, `object`, `start` and `end` attributes.
+
+## Exception class
+
+```Python
+try:
+    import abcdefghijk
+
+except Exception as e:
+    print('Something happend')
+```
+
+The `except Exception` clause is a way of catching all not handled exceptions. It should be used as last resort because it is wide, we do not know what kind of exceptions might occur.
+
+## Chained exceptions
+
+To effectively handling exceptions, Python has a feature called **chained exceptions**. This happens when the program is already handling an exception and this code triggers an additional exception.
+
+If the code handling the first exception triggers an exception we were not expecting, this produces **implicit chaining**. In this case the `__context__` attribute can be use to trace back the exceptions. This exceptions present the error message 'During handling of the above exception, another exception occurred:'.
+
+```Python
+a_list = ['First error', 'Second error']
+
+try:
+    print(a_list[3])
+except Exception as e:
+    print(0 / 0)
+```
+
+
+```Python
+a_list = ['First error', 'Second error']
+
+try:
+    print(a_list[3])
+except Exception as e:
+    try:
+        # the following line is a developer mistake - they wanted to print progress as 1/10	but wrote 1/0
+        print(1 / 0)
+    except ZeroDivisionError as f:
+        print('Inner exception (f):', f)
+        print('Outer exception (e):', e)
+        print('Outer exception referenced:', f.__context__)
+        print('Is it the same object:', f.__context__ is e)
+```
+
+Another case is when we knowingly wish to handle an exception and translated to another type of exception, this produces **explicit chaining**. In this case, `__cause__` can be use. This exceptions present the error message 'The above exception was the direct cause of the following exception:'.
+
+```Python
+class RocketNotReadyError(Exception):
+    pass
+
+def personnel_check():
+    try:
+        print("\tThe captain's name is", crew[0])
+        print("\tThe pilot's name is", crew[1])
+        print("\tThe mechanic's name is", crew[2])
+        print("\tThe navigator's name is", crew[3])
+    except IndexError as e:
+        raise RocketNotReadyError('Crew is incomplete') from e
+
+crew = ['John', 'Mary', 'Mike']
+print('Final check procedure')
+
+try:
+    personnel_check()
+except RocketNotReadyError as f:
+    print('General exception: "{}", caused by "{}"'.format(f, f.__cause__))
+```
+
+
+Using explicitly chained exceptions can be useful with polymorphism, we are able to run two different codes with two different exception types but we can redirect them to the same exception.
+
+## Traceback
+
+Each exception object is provided of a `__traceback__` attribute. To manage tracebacks, python have a built-in module called (surprisingly) `traceback`. This module delivers the `print_tb()` method, which returns a list of strings describing the traceback; and `format_tb()` method, which prints the strings to the standard output.
+
+This is useful to log the errors with a lot of detail. You may make use of logged tracebacks after test sessions to gather statistics or automate bug reporting.
+
+```Python
+import traceback
+
+class RocketNotReadyError(Exception):
+    pass
+
+
+def personnel_check():
+    try:
+        print("\tThe captain's name is", crew[0])
+        print("\tThe pilot's name is", crew[1])
+        print("\tThe mechanic's name is", crew[2])
+        print("\tThe navigator's name is", crew[3])
+    except IndexError as e:
+        raise RocketNotReadyError('Crew is incomplete') from e
+
+
+crew = ['John', 'Mary', 'Mike']
+
+print('Final check procedure')
+
+try:
+    personnel_check()
+except RocketNotReadyError as f:
+    print(f.__traceback__)
+    print(type(f.__traceback__))
+    print('\nTraceback details')
+    details = traceback.format_tb(f.__traceback__)
+    print("\n".join(details))
+
+print('Final check is over')
+```
+
+For more information about chained exceptions and traceback attributes, look at the PEP 3134 document.
+
+
+# Object persistance
+
