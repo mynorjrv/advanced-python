@@ -1226,3 +1226,167 @@ For more information about chained exceptions and traceback attributes, look at 
 
 # Object persistance
 
+## Copying objects
+
+When using variables in python, an assigment statement should be understand as:
+
+```Python
+a_list = [1, 'Nuevayol', 100]
+```
+
+- a_list is the variable name (label)
+- '=' is assigment, a_list is assigned to (has a reference to)
+- the list is an object (and can consist of other objects).
+
+When assigment is being used, evaluation of the right side of the clause takes precedence over the left side.
+
+The process is:
+
+- At first, an object is created in memory. Now this object has **identity**;
+- The object is populated with a **value** (this value could be other objects);
+- finally, the variable is created, it should be treated as a label or name bindindg and this label refers to a place in the computer memory.
+
+### Identity
+
+Indentity  in CPython implemetation refers to the adddres of an object in the memory, and must not be treated as an absolute memory address.
+
+In python, the `id()` function returns the identity of an object. This is an integer which is guaranteed to be unique and constant for this object during its lifetime. Two objects with non-overlapping lifetimes may have the same `id()` value.
+
+```Python
+a_string = '10 days to departure'
+b_string = '20 days to departure'
+
+print('a_string identity:', id(a_string))
+print('b_string identity:', id(b_string))
+```
+
+This function is rarely used in applications. More often you’ll use it to debug the code or to experiment while copying objects. The side effect of this infrequent use is that some developers forget about its existence and create their own variables titled id to store some kind of identity or identifier.
+
+As a result, a variable called id shadows the genuine function and makes it unreachable in the scope in which the variable has been defined. You should remember to avoid such situations!
+
+Some interesting things are mentioned in <https://docs.python.org/3/reference/datamodel.html>.
+
+When two variables are referring to the same object, the return values of `id()` must be the same. As I understood, two variables that contains a 3 have the same id, i do not know if this have to do with inmutability of integers. This same id is also seen if a varable is assigned to another variable, in this case we do not create another object but a new label that references the already created list.
+
+
+### Comparations
+
+When comparing two objects, identity allows the possibility of two possible comparations.
+
+First, there is the `==` operator. This operator compares the values of both operands and checks for value equality. So here we witness a values comparison. Two distinct objects holding the same values could be compared, and the result would be 'True'. Moreover, when you compare two variables referencing the same object, the result would be also 'True'.
+
+To check whether both operands refer to the same object or not, you should use the `is` operator. In this case we are checking if both variables refers to the same identity.
+
+The two cases could be:
+
+- Same object (same memory chunck), two variables.
+- Distinct objects (distinct memory chuncks), two variables.
+
+### Modifiying data
+
+When processing data, sometimes you may want to have distinct copies of objects that you can modify without automatically modifiying the original object. 
+
+This could be done easily with primitive data types but a funny thing happens if we try to copy some other objects, for example lists.
+
+```Python
+print("Part 1")
+print("Let's make a copy")
+a_list = [10, "banana", [997, 123]]
+b_list = a_list[:]
+print("a_list contents:", a_list)
+print("b_list contents:", b_list)
+print("Is it the same object?", a_list is b_list)
+
+print()
+print("Part 2")
+print("Let's modify b_list[2]")
+b_list[2][0] = 112
+print("a_list contents:", a_list)
+print("b_list contents:", b_list)
+print("Is it the same object?", a_list is b_list)
+```
+
+List are compound objects (they are objects that contains other objects, like dictionaries or class instances). In this case, even if a copy of the list using slices is not the same object than the original list, modifying one object results in a modification of the other object.
+
+> Note: this just seems to happen to nesting of compound objects, if the first element of one of the list is changed the other list remains unaffected.
+
+### Shallow copy
+
+What just happened is an example of a **shallow copy**. The copy constructs a new compound object and then populate it with references to the objects found in the original. A shallow copy is only one level deep, the process does not recurse and therefore does not create copies of the child (nested) bjects, but instead populates the new object with references to already existing objects.
+
+The nested objects falls in the classification of two variables but one object.
+
+### Deep copy
+
+If an copletely independent copy of a compound object is dessired, a **deep copy** should be used instead. A deep copy constructs a new compound object and then, recursively, inserts copies of the objects found in the original. 
+
+Deep copies are more resource intensive operations since there are many more operations to be performed.
+
+Also, they need to be performed using the `deepcopy()` function from the `copy` module.
+
+```Python
+import copy
+
+print("Let's make a deep copy")
+a_list = [10, "banana", [997, 123]]
+b_list = copy.deepcopy(a_list)
+print("a_list contents:", a_list)
+print("b_list contents:", b_list)
+print("Is it the same object?", a_list is b_list)
+
+print()
+print("Let's modify b_list[2]")
+b_list[2][0] = 112
+print("a_list contents:", a_list)
+print("b_list contents:", b_list)
+print("Is it the same object?", a_list is b_list)
+```
+
+The module also contains a function that allows shallow copies: `copy()`. This function is useful when thinking about using polymorphism when a universal function to copy any type object is needed.
+
+### Testing performance
+
+In the following example, we'll compare the performance of three ways of copying a large compound object (a million three-element tuples).
+
+The first approach is a simple reference copy. This is done very quickly, as there’s nearly nothing to be done by the CPU – just a copy of a reference to 'a_list'.
+
+The second approach is a shallow copy. This is slower than the previous code, as there are 1,000,000 references (not objects) created.
+
+The third approach is a deep copy. This is the most comprehensive operation, as there are 3,000,000 objects created.
+
+Test it locally on your computer.
+
+```Python
+import copy
+import time
+
+a_list = [(1,2,3) for x in range(1_000_000)]
+
+print('Single reference copy')
+time_start = time.time()
+b_list = a_list
+print('Execution time:', round(time.time() - time_start, 3))
+print('Memory chunks:', id(a_list), id(b_list))
+print('Same memory chunk?', a_list is b_list)
+
+print()
+
+print('Shallow copy')
+time_start = time.time()
+b_list = a_list[:]
+print('Execution time:', round(time.time() - time_start, 3))
+print('Memory chunks:', id(a_list), id(b_list))
+print('Same memory chunk?', a_list is b_list)
+
+print()
+
+print('Deep copy')
+time_start = time.time()
+b_list = copy.deepcopy(a_list)
+print('Execution time:', round(time.time() - time_start, 3))
+print('Memory chunks:', id(a_list), id(b_list))
+print('Same memory chunk?', a_list is b_list)
+```
+
+### Coping other objects
+
