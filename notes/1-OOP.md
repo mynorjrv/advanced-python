@@ -1592,3 +1592,51 @@ print(data.get_size())
 The pickle module is constantly evolving, so the binary format may differ between different versions of Python. Pay attention that both serializing and deserializing parties are making use of the same pickle versions.
 
 Also the pickle module is not secured against erroneous or maliciously constructed data. Never unpickle data received from an untrusted or unauthenticated source. 
+
+## Serialization with shelve
+
+The pickle module is used for serializing objects as a single byte stream. As we saw, both the serializing and deserializing parties must abide by the order of all the elements.
+
+`shelve` is another module, build on top of pickle, that implements a **serialization** dictionary where objects are pickled and associated with a key. The keys must be ordinary strings.
+
+Therefore, you can open a shelved data file and access the pickled objects via the keys. This could be more convenient when serializing many objects.
+
+### Implementing shelve
+
+Shelve uses a file-based database, and we have to access it using an opening mode. This modes are:
+
+| Value | Meaning                            |
+|-------|------------------------------------|
+|'r'    |Open existing database for reading only |
+|'w'	|Open existing database for reading and writing |
+|'c'	|Open database for reading and writing, creating it if it doesn’t exist (this is a default value) |
+|'n'	|Always create a new, empty database, open for reading and writing |
+
+Then you can write or read the objects as in a dictionary.
+
+```Python
+import shelve
+
+shelve_name = 'first_shelve.shlv'
+
+my_shelve = shelve.open(shelve_name, flag='c')
+my_shelve['EUR'] = {'code':'Euro', 'symbol': '€'}
+my_shelve['GBP'] = {'code':'Pounds sterling', 'symbol': '£'}
+my_shelve['USD'] = {'code':'US dollar', 'symbol': '$'}
+my_shelve['JPY'] = {'code':'Japanese yen', 'symbol': '¥'}
+my_shelve.close()
+
+new_shelve = shelve.open(shelve_name)
+print(new_shelve['USD'])
+new_shelve.close()
+```
+
+Shelve uses some additional files to support the database, they must not be altered because it may cause inconsistencies. Python puts the changes made to the dictionary in a buffer which is periodically flushed to the disk. To enforce an immediate flush, call the `sync()` method on your shelve object. Also, when you call the `close()` method on an shelve object, it also flushes the buffers.
+
+The methods that are available to dictionaries are also available to shelve objects. A remark is that shelves manage memory in an efficient way, therefore pickling a dictionary may be more inefficient. 
+
+Since shelve is supported by pickles, it is not safe to load data from an untrusted source.
+
+
+# Metaprogramming
+
