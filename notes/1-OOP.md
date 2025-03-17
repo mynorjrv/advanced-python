@@ -97,7 +97,7 @@ Instance variables are accessed using the syntax `instance.variable`.
 
 Each instance carries it own set of variables, modifying the instance variables of one instance has no impact in other instances of the same class. Instance variables are completely isolated from each other. 
 
-Every python object has a `__dict__` property that lists the content of each object.
+Every python object has a `__dict__` property that lists the content of each object. This property 'acts' as a dictionary (could be another mapping function) and combines all attributes available in your code.
 
 ### Class variables
 ```Python
@@ -821,7 +821,7 @@ del our_tank.level
 
 With this, the name convention is as follows:
 
-- the getter method is decorated with `@property`. The name of the decorated method designates the name of the attribute to be used by the external code;
+- any proxying method (could be the getter method) is decorated with `@property`. The name of the decorated method designates the name of the attribute to be used by the external code;
 - `@name.setter` decorates the setter method where 'name' is the name of the previously decorated method;
 - `@name.deleter` decorates the deleter method, and again 'name' is the name of the previously decorated method.
 
@@ -1638,7 +1638,7 @@ The methods that are available to dictionaries are also available to shelve obje
 Since shelve is supported by pickles, it is not safe to load data from an untrusted source.
 
 
-# Metaprogramming
+# Metaprogramming and metaclasses
 
 Metaprogramming is a programming technique in which computer programs have the ability to modify their own or other programs’ codes. The idea was born and implemented in the early 1960s.
 
@@ -1653,8 +1653,6 @@ Another example of metaprogramming is the **metaclass** concept, which we will s
 Tim Peters, the Python guru who authored the Zen of Python, expressed his feelings about metaclasses in the comp.lang.python newsgroup on 12/22/2002:
 
 > [metaclasses] are deeper magic than 99% of users should ever worry about. If you wonder whether you need them, you don't (the people who actually need them know with certainty that they need them, and don't need an explanation about why).
-
-## Metaclasses
 
 In Python, a metaclass is a class whose instances are classes. Just as an ordinary class defines the behavior of certain objects, a metaclass allows for the customization of class instantiation.
 
@@ -1675,3 +1673,179 @@ The typical use cases for metaclasses:
 
 ## Type
 
+In Python's approach, everything is an object, and every object has some type associated with it. To get the type of any object, make use of the `type()` function.
+
+When we create a custom class, it will be an instance of the **type** special class, which is the default metaclass responsible for creating classes.
+
+Furthermore, what type of objects are built-in classes and the metaclass `type`? A simple experiment shows that `int`, `list` and `type` are all of type `type`.
+
+This leads to the conclusion:
+
+- Metaclasses are used to create classes,
+- classes are used to create objects,
+- the type of the metaclass `type` is `type`.
+
+To extend the above observations, it is important to add:
+
+- `type` can be used to generate classes defined by a programmer,
+- and metaclasses are subclasses of the `type` class.
+
+## Special attributes
+
+Before creating metaclasses we have to get familiar with some special attributes:
+
+- `__name__`, inherent for classes, contains the name of the class,
+- `__class__`, inherent for both classes and instances, contains information about the class to which a class instance belongs,
+- `__bases__`, inherent for classes, it is a tuple an contains information about the base classes of a class,
+- `__dict__`, inherent for both classes and instances, contains a dictionary (or other type mapping object) of the object's attributes.
+
+```Python
+class Dog:
+    pass
+
+dog = Dog()
+print('"dog" is an object of class named:', Dog.__name__)
+print()
+print('class "Dog" is an instance of:', Dog.__class__)
+print('instance "dog" is an instance of:', dog.__class__)
+print()
+print('class "Dog" is  ', Dog.__bases__)
+print()
+print('class "Dog" attributes:', Dog.__dict__)
+print('object "dog" attributes:', dog.__dict__)
+```
+
+The same information stored in `__class__` could be retrieved by calling `type()` with one argument:
+
+```Python
+for element in (1, 'a', True):
+    print(element, 'is', element.__class__, type(element))
+```
+
+## Dynamically creating classes
+
+When the `type()` function is called with three arguments, then it dynamically creates a new class. 
+
+For the invocation of `type(, , )`:
+
+- the first argument specifies the class name, this value becomes the `__name__` attribute of the class;
+- the second argument specifies a tuple of the base classes from which the newly created class is inherited, this argument becomes the `__bases__` attribute of the class;
+- the argument specifies a dictionary containing method definitions and variables for the class body, the elements of this argument become the `__dict__` attribute of the class and state the class namespace.
+
+A very simple example, when both `bases` and `dictionary` are empty, is the 'dog' class.
+
+```Python
+Dog = type('Dog', (), {})
+
+print('The class name is:', Dog.__name__)
+print('The class is an instance of:', Dog.__class__)
+print('The class is based on:', Dog.__bases__)
+print('The class attributes are:', Dog.__dict__)
+```
+
+A more complex example could be creating a dog class which inherits from an animal class.
+
+```Python
+def bark(self):
+    print('Woof, woof')
+
+class Animal:
+    def feed(self):
+        print('It is feeding time!')
+
+Dog = type('Dog', (Animal, ), {'age':0, 'bark':bark})
+
+print('The class name is:', Dog.__name__)
+print('The class is an instance of:', Dog.__class__)
+print('The class is based on:', Dog.__bases__)
+print('The class attributes are:', Dog.__dict__)
+
+doggy = Dog()
+doggy.feed()
+doggy.bark()
+```
+
+This way of creating classes, using the type function, is substantial for Python's way of creating classes using the class instruction:
+
+- after the `class` instruction has been identified and the class body has been executed, the `class = type(, , )` code is executed;
+- the type is responsible for calling the `__call__` method upon class instance creation; this method calls two other methods:
+    - `__new__()`, responsible for creating the class instance in the computer memory, this method is run before `__init__()`;
+    - `__init__()`, responsible for object initialization.
+
+Metaclasses usually implement these two methods (`__init__`, `__new__`), taking control of the procedure of creating and initializing a new class instance. Classes receive a new layer of logic.
+
+## A custom metaclass
+
+Now that we know what’s happening under Python's hood, it’s time to implement our own metaclass.
+
+It’s important to remember that metaclasses are classes that are instantiated to get classes.
+
+The first step is to define a metaclass that derives from the `type` type and arms the class with a 'custom_attribute'.
+
+
+```Python
+class My_Meta(type):
+    def __new__(mcs, name, bases, dictionary):
+        obj = super().__new__(mcs, name, bases, dictionary)
+        obj.custom_attribute = 'Added by My_Meta'
+        return obj
+
+class My_Object(metaclass=My_Meta):
+    pass
+
+print(My_Object.__dict__)
+```
+
+In this case:
+
+- `My_Meta` is derived from `type` which makes it a metaclass,
+- a new `__new__` method is defined, its role is to call the `__new__` method of the parent class to create the new class,
+- `__new__` uses 'mcs' to refer to the class, it is a convention,
+- 'custom_attribute' is an additional attribute created,
+- finally the class is returned.
+
+To create a class from our new metaclass we inherit from the metaclass using the keyword argument `metaclass=`. This is to tell Python that `My_Meta` is not an ordinary superclass.
+
+`__dict__` can be used to check if the newly created class indeed have the 'custom_attribute'.
+
+## Another metaclass
+
+For the next experiment, we want to create a metaclass which completes classes with a method if it is missing, to ensure that all classes are equipped with an specific method.
+
+```Python
+def greetings(self):
+    print('Just a greeting function, but it could be something more serious like a check sum')
+
+class My_Meta(type):
+    def __new__(mcs, name, bases, dictionary):
+        if 'greetings' not in dictionary:
+            dictionary['greetings'] = greetings
+        obj = super().__new__(mcs, name, bases, dictionary)
+        return obj
+
+class My_Class1(metaclass=My_Meta):
+    pass
+
+class My_Class2(metaclass=My_Meta):
+    def greetings(self):
+        print('We are ready to greet you!')
+
+myobj1 = My_Class1()
+myobj1.greetings()
+myobj2 = My_Class2()
+myobj2.greetings()
+```
+
+As you can see, there is a `greetings()` function defined that greets everyone who interacts with it. In a real-life scenario, it could be a function that is obligatory for every class and is responsible for the consistency of object attributes; it could be a function returning a checksum for some of an attribute's values.
+
+> It seems funny that the method is defined outside any class but it gets the self attribute.
+
+In `My_Class1`, by design, there is no `greetings()` function, so when the class is constructed, it is equipped with a default function by the metaclass.
+
+In contrast, in `My_Class2` the greetings function is present from the very beginning.
+
+Both classes rely on the same metaclass.
+
+When you run the code, you'll see that both class instances are equipped with `greetings()` methods. For the “poorer” class, it is completed by the metaclass.
+
+This is how metaclasses become very useful – they can control the process of class instantiation, and adjust created classes to conform with selected rules.
