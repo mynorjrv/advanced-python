@@ -11,7 +11,7 @@ There are a lot of PEPs, the index can be found in the [https://peps.python.org/
 - PEP 20 – The Zen of Python, which presents a list of principles for Python’s design;
 - PEP 257 – Docstring Conventions, which provides guidelines for conventions and semantics associated with Python docstrings.
 
-## PEP 1
+## PEP 1: PEP Purpose and Guidelines
 
 From the PEP itself: 
 
@@ -53,4 +53,52 @@ Also, the PEP defines:
 - Python’s Core Developers, i.e., the group of volunteers who manage Python, and;
 - Python’s BDFL, i.e., Guido van Rossum, the original creator of Python, who served as the project’s Benevolent Dictator For Life until 2018, when he resigned from the decision-making process. This title changed, and PEP-Delegate is used instead of BDFL-Delegate.
 
+
+## PEP 20: The Zen of Python
+
+The Zen of Python is a collection of 19 aphorisms, which reflect the philosophy behind Python, its guiding principles, and design.
+
+Tim Peters, a long time major contributor to the Python programming language and Python community, wrote this 19-line "poem" on the Python mailing list in 1999, and it became entry #20 in the Python Enhancement Proposals in 2004.
+
+This aphorisms are included in the interpreter, they can be seen when running `import this`.
+
+```
+Beautiful is better than ugly.
+Explicit is better than implicit.
+Simple is better than complex.
+Complex is better than complicated.
+Flat is better than nested.
+Sparse is better than dense.
+Readability counts.
+Special cases aren't special enough to break the rules.
+Although practicality beats purity.
+Errors should never pass silently.
+Unless explicitly silenced.
+In the face of ambiguity, refuse the temptation to guess.
+There should be one-- and preferably only one --obvious way to do it.
+Although that way may not be obvious at first unless you're Dutch.
+Now is better than never.
+Although never is often better than *right* now.
+If the implementation is hard to explain, it's a bad idea.
+If the implementation is easy to explain, it may be a good idea.
+Namespaces are one honking great idea -- let's do more of those!
+```
+
+Some specific highlights:
+
+- `import *` is just recommended in interacive environments
+- OOP is useful in data oriented solutions, funcional is better in procedures
+- Usually three identation levels is enough
+- But nesting should be balanced with density
+- Code is read more often thatn it is written, give meaningful names
+- Sticking to conventions already implemented to ensure backward compatibility could be the only special case
+- It is better to fail fast
+- Testing saves time
+- Names must not be ambiguous
+- Remember single responsability principle
+- Dont rush but good enough is good enough
+- What can be explained with words can be translated to code
+- And `module.function` apparently is better than `from module import function`
+
+## PEP 8: Style Guide for Python Code
 
