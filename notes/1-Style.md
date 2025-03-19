@@ -102,3 +102,116 @@ Some specific highlights:
 
 ## PEP 8: Style Guide for Python Code
 
+This pep gives coding conventions for the Python code in the standard library, but it is useful for any Python programmer.
+
+### A foolish consistency is the Hobgoblin of little minds
+
+The style guide is intended to improve readability, and is about consistency. Consistency within one module or function is the most important and then goes within a project and then with the style guide.
+
+Sometimes style guide recommendations just aren’t applicable. When in doubt, use your best judgment.
+
+In particular: do not break backwards compatibility just to comply with this PEP!
+
+Some other good reasons to ignore a particular guideline:
+
+1. When applying the guideline would make the code less readable, even for someone who is used to reading code that follows this PEP.
+2. To be consistent with surrounding code that also breaks it (maybe for historic reasons) – although this is also an opportunity to clean up someone else’s mess (in true XP style).
+3. Because the code in question predates the introduction of the guideline and there is no other reason to be modifying that code.
+4. When the code needs to remain compatible with older versions of Python that don’t support the feature recommended by the style guide.
+
+### Code layout
+
+Indentation:
+
+- 4 spaces per level
+- spaces, not tabs :)
+- Functions arguments should be indented
+- if statements are funny xd
+- Closing brace/brackets/parenthesis may or may not be indented
+
+Line length:
+
+- Max 79 characters
+- Docstrings or commets 72 charactes, strictly
+- The preferred way of wrapping is implicit line continuation inside braces
+- Backslashes may be used in older versions than 3.10 in with or assert statements
+
+Binary operators:
+
+- line breaks comes before binary operations
+
+Blank lines: 
+
+- Top-level functions and class surrounded by two lines
+- methods inside classes surrounded by a single blank line
+- Extra blank lines may be used to separate groups of functions
+- Blank lines should indicate logical sections
+
+File encoding:
+
+- Code in the core Python distribution should always use UTF-8, and should not have an encoding declaration
+- non-ASCII characters may be used for places and humans, avoid noisy ones
+- All identifiers must use ASCII-only characters
+- Identifiers should use English
+
+Imports:
+
+- Imports should be on separate lines
+- `from x import a, b` its okay
+- Standard library, then Third party, then Local specific imports
+- Absolute imports are recommended
+- Relative imports (`from . import sibling` or `from .sibling import example`) are acceptable in complex package layouts, but they should be avoided
+- It is okay to import class names `from myclass import MyClass`, if this causes local name clashes import the module and spell the class explicitly `myclass.MyClass`
+
+Module dunders:
+
+- After module docstring
+- before imports except `from __future__`
+
+### String quotes
+
+No preference xd except for triple-quoted strings where double quotes are used.
+
+### Whitespace
+
+Agh xd so much rules
+
+Buuuuut, a curious one. `:` in slicing is treated as a binary operation so it is suggested the same space before and after. For example `a[1:10:3]` and `a[1 : 10 : 3]`. Also, `:` in dicts are usually `a={1: 'hello'}.
+
+### Naming conventions
+
+Overriding principle: Names visible to the user should reflect usage rather than implementation.
+
+Naming styles:
+
+- `b` (single lowercase letter)
+- `B` (single uppercase letter)
+- `lowercase`
+- `lowercase_with_underscores`
+- `UPPERCASE`
+- `UPPERCASE_WITH_UNDERSCORES`
+- `CamelCase` (or `CapWords`) (should capitalize all letters of acronyms)
+- `mixedCase`
+
+Special styles:
+
+- `_single_leading_underscore`: weak internal use, `from M import *` does not import these.
+- `single_trailing_underscore_`: used to avoid collisions with Python keywords.
+- `__double_leading_underscore`: when naming class attributes, invokes name mangling.
+- `__double_leading_and_trailing_underscore__`: reserved for magic objects.
+
+Naming conventions:
+
+- Avoid 'l', 'O' and 'I'
+- Identifiers must be ASCII compatible
+- Packages and modules names should have short, lowercase names. Underscores may be used in modules for readability, but not in packages.
+- Class names should use `CapWords`. If it is mainly used as a callable, convention for functions may be used.
+- Type variables name should be short and use `CapWords`. `_co` and `_contra` suffixes are used for covariant or contravariant behavior.
+- Exceptions names follows class names, they may add the `Error` suffix.
+- Function and variable names should be lowercase, with words separated by underscores.
+- `self` for instance methods, `cls` for class methods, and the use of trailing underscore if a reserved keyword is going to be used (a synonym is suggested).
+- Constants should be in uppercase
+
+
+## PEP 257: Docstring Conventions
+
