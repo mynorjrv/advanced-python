@@ -215,3 +215,52 @@ Naming conventions:
 
 ## PEP 257: Docstring Conventions
 
+Again, taking directly from the pep itself.
+
+A docstring is a string literal that occurs as the first statement in a module, function, class, or method definition. Such a docstring becomes the `__doc__` special attribute of that object.
+
+All modules should normally have docstrings, and all functions and classes exported by a module should also have docstrings. Public methods (including the __init__ constructor) should also have docstrings. A package may be documented in the module docstring of the __init__.py file in the package directory.
+
+There are two other types of docstrings, they are not recognized by the bytecode compiler but may be extracted by software tools:
+
+1. String literals occurring immediately after a simple assignment at the top level of a module, class, or `__init__` method are called “attribute docstrings”.
+2. String literals occurring immediately after another docstring are called “additional docstrings”.
+
+For consistency, always use `"""triple double quotes"""` around docstrings. Use `r"""raw triple double quotes"""` if you use any backslashes in your docstrings.
+
+### One-line Docstring
+
+One-liners are for really obvious cases. They should really fit on one line.
+
+```Python
+def kos_root():
+    """Return the pathname of the KOS root directory."""
+    global _kos_root # Please ignore the bad practices xd
+    if _kos_root: return _kos_root
+    ...
+```
+
+The docstring is a phrase ending in a period. It prescribes the function or method’s effect as a command (“Do this”, “Return that”), not as a description; e.g. don’t write “Returns the pathname …”.
+
+The one-line docstring should NOT be a “signature” reiterating the function/method parameters (which can be obtained by introspection). This type of docstring is only appropriate for C functions (such as built-ins), where introspection is not possible. However, the nature of the return value cannot be determined by introspection, so it should be mentioned.
+
+### Multi-line Docstrings
+
+Its a lot xd
+
+Letsssss just give an example xd
+
+```Python
+def complex_num(real=0.0, imag=0.0):
+    """Form a complex number.
+
+    Keyword arguments:
+    real -- the real part (default 0.0)
+    imag -- the imaginary part (default 0.0)
+    """
+    if imag == 0.0 and real == 0.0:
+        return complex_zero
+    ...
+```
+
+## PEP 484: Type Hints
