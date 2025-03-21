@@ -263,4 +263,68 @@ def complex_num(real=0.0, imag=0.0):
     ...
 ```
 
+### Accessing docstrings
+
+Simple, so just an example:
+
+```Python
+def my_fun(a, b):
+    """The summary line goes here.
+
+    A more elaborate description of the function.
+
+    Parameters:
+    a: int (description)
+    b: int (description)
+
+    Returns:
+    int: Description of the return value.
+    """
+    return a*b
+
+print(my_fun.__doc__)
+```
+
 ## PEP 484: Type Hints
+
+This PEP introduce the `typing` module which was a provisional solution.
+
+from edube, it's an optional, but more formalized, feature that makes it possible for you to use the Python built-in `typing` module to provide type hint information in your code in order to leave certain suggestions, mark certain possible problems that may come up in the development process, and label specific names with type information.
+
+An example:
+
+```Python
+# Type information added to a function:
+def hello(name: str) -> str:
+    return "Hello, " + name
+```
+
+Type hinting is optional, which means PEP 848 does not obligate you to leave any static typing-related information.
+
+Why would you want type hinting?
+
+- Type hinting can help you document your code. Instead of leaving argument- and response-related information in docstrings, you can use the language itself to serve this purpose. 
+- Type hinting allows you to notice certain kinds of errors more effectively and write a more beautiful and, most of all, cleaner code.
+- Type hinting does not have any effect on the operation of your code. It is ignored at runtime. This means there is no impact on performance.
+
+Another related peps are: [https://peps.python.org/pep-0483/](PEP 483) and [https://peps.python.org/pep-3107/](PEP 3107).
+
+
+## General tips for documenting a project
+
+When documenting, depending on the nature of the project, you should first define its users and think about their needs. You can improve the user experience by thinking about how they are going to utilize your code and trying to predict common issues.
+
+A project should contain the following documentation elements:
+
+- a **readme**, which provides a brief summary of the project, its purpose, and possibly some installation guidelines;
+- an **examples.py** file, which is a script that demonstrates a few examples of how to utilize the project (or a quickstart i guess);
+- a **license** in the form of a txt file (particularly important for Open Source and Public Domain projects);
+- a **how to contribute** file which provides information about the possible ways of contributing to the project (shared, open source, and public domain projects).
+
+## Linters and fixers
+
+Linters are tools that helps you write code. The linter analyzes your code for any stylistic anomalies and programming errors against a set of pre-defined rules.
+
+Some examples are Flake8, Pylint, Pyflakes, Pychecker, Mypy, and Pycodestyle (formerly Pep8).
+
+A fixer, on the other hand, is a program that helps you fix these issues and format your code to be consistent with the adopted standards. The most popular fixers are: Black, YAPF, and autopep8.
