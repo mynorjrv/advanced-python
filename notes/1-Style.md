@@ -210,7 +210,7 @@ Naming conventions:
 - Exceptions names follows class names, they may add the `Error` suffix.
 - Function and variable names should be lowercase, with words separated by underscores.
 - `self` for instance methods, `cls` for class methods, and the use of trailing underscore if a reserved keyword is going to be used (a synonym is suggested).
-- Constants should be in uppercase
+- Constants should be in `UPPERCASE_WITH_UNDERSCORES`.
 
 
 ## PEP 257: Docstring Conventions
